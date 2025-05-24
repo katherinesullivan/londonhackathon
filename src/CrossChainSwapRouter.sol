@@ -42,7 +42,8 @@ interface ITeleporterReceiver {
     ) external;
 }
 
-interface IDEXRouter {
+// Renamed to avoid conflict with LiquidityAggregator.IDEXRouter
+interface ISwapRouter {
     function swapExactTokensForTokens(
         uint amountIn,
         uint amountOutMin,
@@ -432,7 +433,7 @@ contract CrossChainSwapRouter is CCIPReceiver, ITeleporterReceiver, Ownable, Ree
                 IERC20(tokenIn).safeApprove(dexRouter, amountIn);
                 
                 // Execute swap
-                try IDEXRouter(dexRouter).swapExactTokensForTokens(
+                try ISwapRouter(dexRouter).swapExactTokensForTokens(
                     amountIn,
                     minAmountOut,
                     path.length > 0 ? path : _getDefaultPath(tokenIn, tokenOut),
@@ -496,7 +497,7 @@ contract CrossChainSwapRouter is CCIPReceiver, ITeleporterReceiver, Ownable, Ree
         
         uint256 amountAfterFee = amountIn - (amountIn * PROTOCOL_FEE_BPS / BPS_DENOMINATOR);
         
-        try IDEXRouter(dexRouter).getAmountsOut(
+        try ISwapRouter(dexRouter).getAmountsOut(
             amountAfterFee,
             path.length > 0 ? path : _getDefaultPath(tokenIn, tokenOut)
         ) returns (uint[] memory amounts) {
@@ -519,9 +520,9 @@ contract CrossChainSwapRouter is CCIPReceiver, ITeleporterReceiver, Ownable, Ree
         emit AvalancheL1Added(blockchainID);
     }
     
-    function addDEX(address dex) external onlyOwner {
-        supportedDEXs[dex] = true;
-        emit DEXAdded(dex);
+    function addDEX(address dexRouter) external onlyOwner {
+        supportedDEXs[dexRouter] = true;
+        emit DEXAdded(dexRouter);
     }
     
     function setPriceFeed(address token, address feed) external onlyOwner {

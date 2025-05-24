@@ -4,7 +4,7 @@ out = "out"
 libs = ["lib"]
 remappings = [
     "@openzeppelin/=lib/openzeppelin-contracts/",
-    "@chainlink/=lib/chainlink/",
+    "@chainlink/=lib/chainlink-contracts/",
     "@teleporter/=lib/teleporter/"
 ]
 
@@ -20,9 +20,10 @@ fuji = "${AVALANCHE_FUJI_RPC}"
 avalanche = "${AVALANCHE_MAINNET_RPC}"
 localhost = "http://localhost:8545"
 
-[etherscan]
-fuji = { key = "${SNOWTRACE_API_KEY}", url = "https://api-testnet.snowtrace.io/api" }
-avalanche = { key = "${SNOWTRACE_API_KEY}", url = "https://api.snowtrace.io/api" }
+# Etherscan API configuration for verification - uncomment for contract verification
+# [etherscan]
+# fuji = { key = "${SNOWTRACE_API_KEY}", url = "https://api-testnet.snowtrace.io/api" }
+# avalanche = { key = "${SNOWTRACE_API_KEY}", url = "https://api.snowtrace.io/api" }
 
 # Testing
 [fuzz]
