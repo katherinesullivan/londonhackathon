@@ -117,7 +117,7 @@ contract LiquidityAggregator is Ownable, ReentrancyGuard {
         uint256 reserve1
     );
 
-    constructor() {}
+    constructor() Ownable(msg.sender) ReentrancyGuard() {}
 
     // ============ Main Functions - Highest Net Value Routing ============
 
@@ -135,7 +135,7 @@ contract LiquidityAggregator is Ownable, ReentrancyGuard {
         address tokenIn,
         address tokenOut,
         uint256 amountIn
-    ) external view returns (Route memory bestRoute) {
+    ) external returns (Route memory bestRoute) {
         Route[] memory candidates = _findAllRoutes(chainId, tokenIn, tokenOut, amountIn);
         
         if (candidates.length == 0) {

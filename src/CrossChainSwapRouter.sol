@@ -4,17 +4,14 @@ pragma solidity ^0.8.20;
 import "../lib/chainlink-contracts/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import "../lib/chainlink-contracts/src/v0.8/ccip/libraries/Client.sol";
 import "../lib/chainlink-contracts/src/v0.8/ccip/applications/CCIPReceiver.sol";
-import "../lib/chainlink-contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
-import "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import "../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import "../lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
-// import "@openzeppelin/contracts/security/Pausable.sol";import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
-// import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-// import "@openzeppelin/contracts/security/Pausable.sol";
+import {AggregatorV3Interface} from "../lib/chainlink-contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+import {IERC20} from "../lib/chainlink-contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "../lib/chainlink-contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Ownable} from "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import {ReentrancyGuard} from "../lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
+import {Pausable} from "../lib/chainlink-contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/security/Pausable.sol";
+import {Context as OZContext} from "../lib/openzeppelin-contracts/contracts/utils/Context.sol";
+import {Context as ChainlinkContext} from "../lib/chainlink-contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/utils/Context.sol";
 
 // Avalanche ICM/Teleporter interfaces
 interface ITeleporterMessenger {
@@ -65,6 +62,15 @@ interface IDEXRouter {
  */
 contract CrossChainSwapRouter is CCIPReceiver, ITeleporterReceiver, Ownable, ReentrancyGuard, Pausable {
     using SafeERC20 for IERC20;
+
+    // Override context functions to resolve inheritance conflict
+    function _msgSender() internal view override(ChainlinkContext, OZContext) returns (address) {
+        return msg.sender;
+    }
+
+    function _msgData() internal view override(ChainlinkContext, OZContext) returns (bytes calldata) {
+        return msg.data;
+    }
 
     // Constants
     uint256 public constant PROTOCOL_FEE_BPS = 10; // 0.1% fee like Tesseract
@@ -150,7 +156,7 @@ contract CrossChainSwapRouter is CCIPReceiver, ITeleporterReceiver, Ownable, Ree
         address _router,
         address _teleporter,
         address _feeRecipient
-    ) CCIPReceiver(_router) {
+    ) CCIPReceiver(_router) Ownable(msg.sender) Pausable() {
         teleporter = ITeleporterMessenger(_teleporter);
         feeRecipient = _feeRecipient;
     }
@@ -307,7 +313,7 @@ contract CrossChainSwapRouter is CCIPReceiver, ITeleporterReceiver, Ownable, Ree
         });
         
         // Get required fee
-        uint256 fees = IRouterClient(i_router).getFee(
+        uint256 fees = IRouterClient(i_ccipRouter).getFee(
             params.destinationChain.chainlinkChainSelector,
             message
         );
@@ -315,10 +321,10 @@ contract CrossChainSwapRouter is CCIPReceiver, ITeleporterReceiver, Ownable, Ree
         if (msg.value < fees) revert InsufficientOutput();
         
         // Approve router
-        IERC20(params.tokenIn).safeApprove(i_router, amount);
+        IERC20(params.tokenIn).safeApprove(i_ccipRouter, amount);
         
         // Send via CCIP
-        IRouterClient(i_router).ccipSend{value: fees}(
+        IRouterClient(i_ccipRouter).ccipSend{value: fees}(
             params.destinationChain.chainlinkChainSelector,
             message
         );
