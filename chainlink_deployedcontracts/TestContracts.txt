@@ -1,0 +1,7 @@
+Updated Fuji CChain Sender/Receiver contract: 0x9c19d66eeF2c5a207c5162cdde48339737a05f2e
+
+Updated Mainnet Sepolia Sender/Receiver contract:
+0xcbECE441ce8f7dcbf2f8037189523e542659E13e
+
+Updated Optimism Sepolia Sender/Receiver contract:
+0x11F81bEC514627DB7c19aCBd72b5BAA0C1B4822F
