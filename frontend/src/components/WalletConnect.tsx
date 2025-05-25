@@ -15,7 +15,7 @@ export default function WalletConnect() {
     const cleanup = walletManager.onWalletChange(setWallet);
 
     return cleanup;
-  }, []);
+  }, [walletManager]);
 
   const handleConnect = async () => {
     setIsConnecting(true);
@@ -41,10 +41,11 @@ export default function WalletConnect() {
       <div className="relative">
         <button
           onClick={() => setShowDetails(!showDetails)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-3 py-2 rounded-lg transition-colors text-sm"
-        >
-          {walletManager.formatAddress(wallet.address)}
-        </button>
+          className="bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-2 rounded-lg transition-colors text-sm flex items-center space-x-1"
+                  >
+            <span>🏔️</span>
+            <span>{walletManager.formatAddress(wallet.address)}</span>
+          </button>
         
         {showDetails && (
           <div className="absolute right-0 top-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 p-3 min-w-48">
@@ -72,7 +73,7 @@ export default function WalletConnect() {
     <button
       onClick={handleConnect}
       disabled={isConnecting}
-      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
     >
       {isConnecting ? (
         <div className="flex items-center space-x-2">
@@ -80,7 +81,10 @@ export default function WalletConnect() {
           <span>Connecting...</span>
         </div>
       ) : (
-        'Connect Wallet'
+        <>
+          <span>🏔️</span>
+          <span>Connect Wallet</span>
+        </>
       )}
     </button>
   );

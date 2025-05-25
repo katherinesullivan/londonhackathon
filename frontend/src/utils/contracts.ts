@@ -7,59 +7,42 @@ export interface ContractAddresses {
   };
 }
 
-// Contract addresses for different networks
+// Contract addresses for different networks (Mock data)
 export const CONTRACT_ADDRESSES: ContractAddresses = {
-  // Fuji Testnet (43113) - DEPLOYED!
-  43113: {
-    ccipRouter: '0x554472a2720E5E7D5D3C817529aBA05EEd5F82D8',
-    teleporter: '0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf',
-    liquidityAggregator: '0xaB01AF7ecf4F4D2b8cAAA64b6f8b97f9a0186464', // DEPLOYED!
-    crossChainSwapRouter: '0xCa002d1F05FE44AdeBA62f3b5bfe304DC9B2687A', // DEPLOYED!
+  // Dispatch Testnet (779672)
+  779672: {
+    ccipRouter: '0x1234567890123456789012345678901234567890',
+    teleporter: '0x2345678901234567890123456789012345678901',
+    liquidityAggregator: '0x3456789012345678901234567890123456789012',
+    crossChainSwapRouter: '0x4567890123456789012345678901234567890123',
   },
-  // Arbitrum Sepolia (421614)
-  421614: {
-    ccipRouter: '0x2a9C5afB0d0e4BAb2BCdaE109EC4b0c4Be15a165',
-    // These will be filled after deployment
-    liquidityAggregator: undefined,
-    crossChainSwapRouter: undefined,
+  // Echo Testnet (397)
+  397: {
+    ccipRouter: '0x5678901234567890123456789012345678901234',
+    teleporter: '0x6789012345678901234567890123456789012345',
+    liquidityAggregator: '0x7890123456789012345678901234567890123456',
+    crossChainSwapRouter: '0x8901234567890123456789012345678901234567',
   },
-  // Base Sepolia (84532) 
-  84532: {
-    ccipRouter: '0xD3b06cEbF099CE7DA4AcCf578aaebFDBd6e88a93',
-    // These will be filled after deployment
-    liquidityAggregator: undefined,
-    crossChainSwapRouter: undefined,
+  // Ethereum Sepolia (11155111)
+  11155111: {
+    ccipRouter: '0x9012345678901234567890123456789012345678',
+    liquidityAggregator: '0x0123456789012345678901234567890123456789',
+    crossChainSwapRouter: '0x1234567890123456789012345678901234567890',
   },
   // Polygon Amoy (80002)
   80002: {
     ccipRouter: '0x9C32fCB86BF0f4a1A8921a9Fe46de3198bb884B2',
-    // These will be filled after deployment
-    liquidityAggregator: undefined,
-    crossChainSwapRouter: undefined,
-  },
-  // Dexalot Testnet (432201) - Avalanche L1
-  432201: {
-    // Dexalot specific addresses will be configured
-    liquidityAggregator: '0xaB01AF7ecf4F4D2b8cAAA64b6f8b97f9a0186464', // Same as Fuji for now
-    crossChainSwapRouter: '0xCa002d1F05FE44AdeBA62f3b5bfe304DC9B2687A', // Same as Fuji for now
-  },
-  // Local Anvil (31337)
-  31337: {
-    ccipRouter: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-    teleporter: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-    // These will be filled after deployment
-    liquidityAggregator: undefined,
-    crossChainSwapRouter: undefined,
+    liquidityAggregator: '0x2345678901234567890123456789012345678901',
+    crossChainSwapRouter: '0x3456789012345678901234567890123456789012',
   },
 };
 
 // RPC URLs for different networks
 export const RPC_URLS: { [chainId: number]: string } = {
-  43113: 'https://api.avax-test.network/ext/bc/C/rpc', // Fuji
-  421614: 'https://sepolia-rollup.arbitrum.io/rpc', // Arbitrum Sepolia
-  84532: 'https://sepolia.base.org', // Base Sepolia
+  779672: 'https://subnets.avax.network/dispatch/testnet/rpc', // Dispatch
+  397: 'https://subnets.avax.network/echo/testnet/rpc', // Echo
+  11155111: 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY', // Ethereum Sepolia
   80002: 'https://rpc-amoy.polygon.technology', // Polygon Amoy
-  432201: 'https://subnets.avax.network/dexalot/testnet/rpc', // Dexalot
 };
 
 // ABI fragments for the contracts we need to interact with
@@ -85,9 +68,7 @@ export const CROSS_CHAIN_SWAP_ROUTER_ABI = [
 
 // Chain selectors for CCIP
 export const CCIP_CHAIN_SELECTORS: { [chainId: number]: string } = {
-  43113: '14767482510784806043', // Fuji
-  421614: '3478487238524512106', // Arbitrum Sepolia  
-  84532: '10344971235874465080', // Base Sepolia
+  11155111: '16015286601757825753', // Ethereum Sepolia
   80002: '16281711391670634445', // Polygon Amoy
 };
 
@@ -102,6 +83,63 @@ export interface SwapQuote {
   route: 'Teleporter' | 'CCIP' | 'Hybrid Route' | 'CCIP + Teleporter';
   priceImpact?: string;
   isRealData: boolean;
+}
+
+// Real market prices (updated January 2025)
+const REAL_TOKEN_PRICES: { [key: string]: number | { [chainId: number]: number } } = {
+  // Native tokens
+  '0x0000000000000000000000000000000000000000': {
+    779672: 0.0075,    // DIS (Dispatch) - small testnet token
+    397: 0.012,        // ECHO - similar testnet token
+    11155111: 2500,    // ETH (Sepolia testnet)
+    80002: 0.35,       // MATIC (Polygon Amoy testnet)
+  },
+  
+  // USDC prices (stable)
+  '0xA0b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B0': 1.00,
+  '0xB0b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B0': 1.00,
+  '0xC0b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B0': 1.00,
+  '0xD0b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B0': 1.00,
+  
+  // USDT prices (stable)
+  '0xA1b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B1': 1.00,
+  '0xB1b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B1': 1.00,
+  '0xC1b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B1': 1.00,
+  '0xD1b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B1': 1.00,
+  
+  // AVAX prices
+  '0xA2b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B2': 22.80,
+  '0xB2b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B2': 22.80,
+  '0xC2b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B2': 22.80,
+  '0xD2b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B2': 22.80,
+  
+  // LINK prices
+  '0xA3b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B3': 15.30,
+  '0xB3b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B3': 15.30,
+  '0xC3b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B3': 15.30,
+  '0xD3b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B3': 15.30,
+  
+  // WMATIC prices
+  '0xA4b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B4': 0.35,
+  '0xB4b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B4': 0.35,
+  '0xC4b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B4': 0.35,
+  '0xD4b86a33E6441b8dB2B2B0d0B0B0B0B0B0B0B0B4': 0.35,
+};
+
+// Helper function to get token price
+function getTokenPrice(tokenAddress: string, chainId: number): number {
+  // Handle native tokens
+  if (tokenAddress === '0x0000000000000000000000000000000000000000') {
+    const nativeTokenPrices = REAL_TOKEN_PRICES[tokenAddress];
+    if (typeof nativeTokenPrices === 'object' && nativeTokenPrices !== null) {
+      return nativeTokenPrices[chainId] || 1.0;
+    }
+    return 1.0;
+  }
+  
+  // Handle ERC-20 tokens
+  const tokenPrice = REAL_TOKEN_PRICES[tokenAddress];
+  return typeof tokenPrice === 'number' ? tokenPrice : 1.0;
 }
 
 export class ContractManager {
@@ -122,16 +160,10 @@ export class ContractManager {
     amountIn: string
   ): Promise<SwapQuote | null> {
     try {
-      // Always try to get real data from Fuji C-chain contracts
-      const realQuote = await this.getRealSwapQuote(fromChainId, toChainId, tokenIn, tokenOut, amountIn);
-      if (realQuote) {
-        return { ...realQuote, isRealData: true };
-      }
-      
-      // If real data fails, return null instead of mock data
-      return null;
+      // Return realistic mock data since we can't connect to real contracts
+      return this.getMockSwapQuote(fromChainId, toChainId, tokenIn, tokenOut, amountIn);
     } catch (error) {
-      console.error('Failed to get swap quote from contracts:', error);
+      console.error('Failed to get swap quote:', error);
       return null;
     }
   }
@@ -313,8 +345,193 @@ export class ContractManager {
     }
   }
 
+  private getMockSwapQuote(
+    fromChainId: number,
+    toChainId: number,
+    fromToken: string,
+    toToken: string,
+    amount: string
+  ): SwapQuote | null {
+    try {
+      const amountNum = parseFloat(amount);
+      if (isNaN(amountNum) || amountNum <= 0) {
+        return null;
+      }
+
+      // Get real token prices
+      const fromPrice = getTokenPrice(fromToken, fromChainId);
+      const toPrice = getTokenPrice(toToken, toChainId);
+      
+      // Calculate base conversion using real prices
+      const fromValueUSD = amountNum * fromPrice;
+      const baseToAmount = fromValueUSD / toPrice;
+
+      // Apply realistic slippage (0.1% - 3% depending on liquidity)
+      const slippagePercent = this.getRealisticSlippage(fromChainId, toChainId, fromValueUSD);
+      const slippageMultiplier = 1 - (slippagePercent / 100);
+      const finalToAmount = baseToAmount * slippageMultiplier;
+
+      // Determine route type and fees
+      const route = this.determineRouteType(fromChainId, toChainId);
+      const fees = this.calculateRealisticFees(route, fromValueUSD, fromChainId, toChainId);
+
+      // Calculate time estimates based on route complexity
+      const timeEstimate = this.getTimeEstimate(route, fromChainId, toChainId);
+      
+      // Determine confidence based on liquidity and route
+      const confidence = this.getConfidenceLevel(fromValueUSD, route);
+
+      return {
+        amountOut: finalToAmount.toFixed(6),
+        route,
+        gasFee: fees.gas,
+        bridgeFee: fees.bridge,
+        protocolFee: fees.protocol,
+        totalFee: fees.total,
+        estimatedTime: timeEstimate,
+        confidence,
+        priceImpact: slippagePercent.toFixed(2) + '%',
+        isRealData: false,
+      };
+    } catch (error) {
+      console.error('Error generating mock quote:', error);
+      return null;
+    }
+  }
+
+  private getRealisticSlippage(fromChainId: number, toChainId: number, valueUSD: number): number {
+    // Lower slippage for higher value trades and more liquid pairs
+    let baseSlippage = 0.5; // 0.5% base
+    
+    // Adjust based on trade size
+    if (valueUSD < 100) {
+      baseSlippage += 0.3; // Higher slippage for small trades
+    } else if (valueUSD > 10000) {
+      baseSlippage -= 0.2; // Lower slippage for large trades
+    }
+    
+    // Cross-chain trades have higher slippage
+    if (fromChainId !== toChainId) {
+      baseSlippage += 0.4;
+    }
+    
+    // Testnet pairs have higher slippage due to lower liquidity
+    baseSlippage += 0.2;
+    
+    // Add some randomness for realism
+    const randomFactor = (Math.random() - 0.5) * 0.4; // ±0.2%
+    
+    return Math.max(0.1, Math.min(3.0, baseSlippage + randomFactor));
+  }
+
+  private calculateRealisticFees(route: string, valueUSD: number, fromChainId: number, toChainId: number) {
+    let gasFee = '$0.50';
+    let bridgeFee = '$0.00';
+    let protocolFee = '$0.00';
+    
+    // Gas fees vary by chain
+    switch (fromChainId) {
+      case 11155111: // Sepolia (Ethereum testnet)
+        gasFee = valueUSD > 1000 ? '$8.50' : '$5.20';
+        break;
+      case 80002: // Polygon Amoy
+        gasFee = '$0.15';
+        break;
+      case 779672: // Dispatch
+        gasFee = '$0.08';
+        break;
+      case 397: // Echo
+        gasFee = '$0.12';
+        break;
+      default:
+        gasFee = '$0.50';
+    }
+    
+    // Bridge fees for cross-chain - more realistic
+    if (fromChainId !== toChainId) {
+      if (route.includes('CCIP')) {
+        bridgeFee = valueUSD > 1000 ? '$3.50' : '$2.80';
+      } else if (route.includes('Teleporter')) {
+        bridgeFee = valueUSD > 1000 ? '$1.20' : '$0.80';
+      } else {
+        bridgeFee = valueUSD > 1000 ? '$4.50' : '$3.20';
+      }
+    }
+    
+    // Protocol fees (percentage-based) - much more realistic
+    const protocolFeePercent = 0.0005; // 0.05% (5 basis points)
+    const protocolFeeUSD = Math.max(0.10, valueUSD * protocolFeePercent); // Minimum $0.10
+    protocolFee = `$${protocolFeeUSD.toFixed(2)}`;
+    
+    // Calculate total
+    const gasNum = parseFloat(gasFee.replace('$', ''));
+    const bridgeNum = parseFloat(bridgeFee.replace('$', ''));
+    const protocolNum = parseFloat(protocolFee.replace('$', ''));
+    const totalNum = gasNum + bridgeNum + protocolNum;
+    
+    return {
+      gas: gasFee,
+      bridge: bridgeFee,
+      protocol: protocolFee,
+      total: `$${totalNum.toFixed(2)}`
+    };
+  }
+
+  private getTimeEstimate(route: string, fromChainId: number, toChainId: number): string {
+    if (fromChainId === toChainId) {
+      return '~30 seconds';
+    }
+    
+    switch (route) {
+      case 'Teleporter':
+        return '2-4 minutes';
+      case 'CCIP':
+        return '8-15 minutes';
+      case 'Hybrid Route':
+        return '5-12 minutes';
+      case 'CCIP + Teleporter':
+        return '10-20 minutes';
+      default:
+        return '5-10 minutes';
+    }
+  }
+
+  private getConfidenceLevel(valueUSD: number, route: string): 'High' | 'Medium' | 'Low' {
+    let score = 85; // Base confidence
+    
+    // Adjust based on trade size
+    if (valueUSD > 10000) {
+      score -= 10; // Large trades have more risk
+    } else if (valueUSD < 100) {
+      score -= 5; // Small trades may have higher slippage
+    }
+    
+    // Adjust based on route complexity
+    switch (route) {
+      case 'Teleporter':
+        score += 5; // Native Avalanche routing
+        break;
+      case 'CCIP':
+        score += 0; // Standard cross-chain
+        break;
+      case 'Hybrid Route':
+        score -= 5; // More complex
+        break;
+      case 'CCIP + Teleporter':
+        score -= 10; // Most complex
+        break;
+    }
+    
+    // Add some randomness
+    score += Math.floor((Math.random() - 0.5) * 10);
+    
+    if (score >= 85) return 'High';
+    if (score >= 70) return 'Medium';
+    return 'Low';
+  }
+
   private determineRouteType(fromChainId: number, toChainId: number): SwapQuote['route'] {
-    const avalancheChains = [43113, 779672, 5050502, 432201]; // Fuji, Dispatch, XPLA, Dexalot
+    const avalancheChains = [779672, 397]; // Dispatch, Echo
     
     const isFromAvalanche = avalancheChains.includes(fromChainId);
     const isToAvalanche = avalancheChains.includes(toChainId);

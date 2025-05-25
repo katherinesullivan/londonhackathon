@@ -30,10 +30,10 @@ interface SwapState {
 
 export default function SwapInterface() {
   const [swapState, setSwapState] = useState<SwapState>({
-    fromChain: 'dexalot', // Start with Dexalot (Avalanche L1)
-    toChain: 'arbitrumSepolia', // To external chain
-    fromToken: '0x0000000000000000000000000000000000000000', // Native ALOT
-    toToken: '0x0000000000000000000000000000000000000000', // Native ETH
+    fromChain: 'dispatch', // Start with Dispatch (Avalanche L1)
+    toChain: 'polygonAmoy', // To Polygon Amoy testnet
+    fromToken: '0x0000000000000000000000000000000000000000', // Native DIS
+    toToken: '0x0000000000000000000000000000000000000000', // Native MATIC
     amount: '',
     slippage: 0.5,
   });
@@ -74,12 +74,12 @@ export default function SwapInterface() {
         );
         setSwapQuote(quote);
         if (!quote) {
-          setQuoteError('Unable to get real pricing. Please ensure you are connected to Fuji testnet.');
+          setQuoteError('Unable to generate quote. Please check your input parameters.');
         }
       } catch (error) {
         console.error('Failed to fetch quote:', error);
         setSwapQuote(null);
-        setQuoteError(error instanceof Error ? error.message : 'Failed to fetch quote from contracts');
+        setQuoteError(error instanceof Error ? error.message : 'Failed to generate quote');
       } finally {
         setQuoteLoading(false);
       }
@@ -88,7 +88,7 @@ export default function SwapInterface() {
     // Debounce quote fetching
     const timeoutId = setTimeout(fetchQuote, 500);
     return () => clearTimeout(timeoutId);
-  }, [swapState.fromChain, swapState.toChain, swapState.fromToken, swapState.toToken, swapState.amount]);
+  }, [swapState.fromChain, swapState.toChain, swapState.fromToken, swapState.toToken, swapState.amount, contractManager]);
 
   const handleSwapChains = () => {
     setSwapState(prev => ({
@@ -102,12 +102,12 @@ export default function SwapInterface() {
 
   const handleSwap = async () => {
     if (!swapState.amount || parseFloat(swapState.amount) <= 0) {
-      alert('Please enter a valid amount');
+      alert('🦖 T-rex needs food! Enter a valid amount.');
       return;
     }
 
     if (!swapQuote) {
-      alert('Please wait for quote to load');
+      alert('🦕 Hold on! T-rex is still calculating the best route.');
       return;
     }
 
@@ -163,17 +163,17 @@ export default function SwapInterface() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-xl shadow-2xl border border-blue-200 overflow-hidden">
+      <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-xl shadow-2xl border border-green-200 overflow-hidden">
         {/* Compact Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-2">
+        <div className="bg-gradient-to-r from-green-700 to-emerald-700 px-3 py-2">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <Zap className="w-4 h-4 text-white" />
-              <h3 className="text-base font-bold text-white">Cross-Chain Swap</h3>
+              <h3 className="text-base font-bold text-white">🦖 T-rex Swap</h3>
             </div>
             <button
               onClick={() => setShowSlippage(!showSlippage)}
-              className="text-white hover:text-blue-200 transition-colors p-1 rounded"
+              className="text-white hover:text-green-200 transition-colors p-1 rounded"
             >
               <Settings className="w-4 h-4" />
             </button>
@@ -181,12 +181,12 @@ export default function SwapInterface() {
           
           {/* Route Type Indicator */}
           <div className="mt-1 flex items-center space-x-2">
-            <div className="w-2 h-2 bg-blue-300 rounded-full animate-pulse"></div>
-            <span className="text-blue-100 text-xs font-medium">{getRouteType()}</span>
+            <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+            <span className="text-green-100 text-xs font-medium">{getRouteType()}</span>
             {swapQuote && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-200">
-                🔗 Live Data
-              </span>
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-200">
+                  🦖 Mock
+                </span>
             )}
             {quoteError && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-200">
@@ -198,10 +198,10 @@ export default function SwapInterface() {
 
         {/* Slippage Settings */}
         {showSlippage && (
-          <div className="bg-blue-50 px-3 py-2 border-b border-blue-100">
-            <label className="block text-xs font-medium text-blue-800 mb-1">
-              Slippage Tolerance
-            </label>
+          <div className="bg-green-50 px-3 py-2 border-b border-green-100">
+                          <label className="block text-xs font-medium text-green-800 mb-1">
+                Slippage Tolerance
+              </label>
             <div className="flex space-x-2">
               {[0.1, 0.5, 1.0].map((value) => (
                 <button
@@ -209,8 +209,8 @@ export default function SwapInterface() {
                   onClick={() => setSwapState(prev => ({ ...prev, slippage: value }))}
                   className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${
                     swapState.slippage === value
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-blue-700 hover:bg-blue-100 border border-blue-200'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-white text-green-700 hover:bg-green-100 border border-green-200'
                   }`}
                 >
                   {value}%
@@ -223,7 +223,7 @@ export default function SwapInterface() {
         <div className="p-2 space-y-1.5">
           {/* From Section */}
           <div className="space-y-1">
-            <label className="block text-xs font-semibold text-gray-700">From</label>
+            <label className="block text-xs font-semibold text-gray-700">🦖 From (T-rex starts here)</label>
             
             {/* From Chain Selector */}
             <ChainSelector
@@ -248,10 +248,10 @@ export default function SwapInterface() {
               <div>
                 <input
                   type="number"
-                  placeholder="0.0"
+                  placeholder="🍖 Feed me!"
                   value={swapState.amount}
                   onChange={(e) => setSwapState(prev => ({ ...prev, amount: e.target.value }))}
-                  className="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right text-sm font-semibold transition-all duration-200"
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-right text-sm font-semibold transition-all duration-200"
                 />
               </div>
             </div>
@@ -261,15 +261,15 @@ export default function SwapInterface() {
           <div className="flex justify-center py-0.5">
             <button
               onClick={handleSwapChains}
-              className="bg-blue-100 hover:bg-blue-200 rounded-full p-1.5 transition-all duration-200 border border-blue-300 hover:scale-105"
+              className="bg-green-100 hover:bg-green-200 rounded-full p-1.5 transition-all duration-200 border border-green-300 hover:scale-105"
             >
-              <ArrowUpDown className="w-3 h-3 text-blue-700" />
+                              <span className="text-green-700 text-sm">🔄</span>
             </button>
           </div>
 
           {/* To Section */}
           <div className="space-y-1">
-            <label className="block text-xs font-semibold text-gray-700">To</label>
+            <label className="block text-xs font-semibold text-gray-700">🦕 To (T-rex destination)</label>
             
             {/* To Chain Selector */}
             <ChainSelector
@@ -321,7 +321,7 @@ export default function SwapInterface() {
             <div className="bg-red-50 border border-red-200 rounded-lg p-1.5">
               <div className="flex items-center space-x-1">
                 <span className="text-red-600 text-xs">⚠️</span>
-                <span className="text-red-700 text-xs font-medium">Pricing Error</span>
+                <span className="text-red-700 text-xs font-medium">🦖 T-rex is confused!</span>
               </div>
               <p className="text-red-600 text-xs mt-0.5">{quoteError}</p>
             </div>
@@ -329,16 +329,16 @@ export default function SwapInterface() {
 
           {/* Enhanced Cost Information with Real Data */}
           {swapState.amount && parseFloat(swapState.amount) > 0 && !quoteError && (
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-1.5 border border-blue-200">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-1.5 border border-green-200">
               <div className="flex justify-between items-center mb-1">
-                <h4 className="text-xs font-semibold text-gray-800">Cost Breakdown</h4>
+                <h4 className="text-xs font-semibold text-gray-800">🦴 T-rex Feeding Costs</h4>
                 <div className="flex items-center space-x-1">
                   {quoteLoading && (
-                    <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-3 h-3 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
                   )}
                   {swapQuote && (
                     <span className="text-xs px-1 py-0.5 rounded bg-green-100 text-green-700">
-                      🔗 Live
+                      🦖 Mock
                     </span>
                   )}
                 </div>
@@ -380,7 +380,7 @@ export default function SwapInterface() {
                 </div>
               ) : (
                 <div className="text-xs text-gray-500 text-center py-1">
-                  {quoteLoading ? 'Fetching real pricing from contracts...' : 'Connect wallet to Fuji for live pricing'}
+                  {quoteLoading ? '🦖 T-rex is calculating...' : 'Enter amount to feed the T-rex and see costs'}
                 </div>
               )}
             </div>
@@ -390,22 +390,22 @@ export default function SwapInterface() {
           <button
             onClick={handleSwap}
             disabled={!swapState.amount || parseFloat(swapState.amount) <= 0 || isLoading || quoteLoading || !swapQuote}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-sm py-1.5 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-sm py-1.5 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
           >
             {isLoading ? (
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Processing...</span>
+                <span>🦖 T-rex is stomping...</span>
               </div>
             ) : quoteLoading ? (
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Getting Live Quote...</span>
+                <span>🦖 T-rex is thinking...</span>
               </div>
             ) : !swapQuote && swapState.amount ? (
-              'Connect to Fuji for Real Pricing'
+              '🦕 Wake up T-rex!'
             ) : (
-              'Execute Cross-Chain Swap'
+              '🦖 RAWR! Execute Swap'
             )}
           </button>
         </div>

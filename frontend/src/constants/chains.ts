@@ -34,17 +34,17 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
     isAvalancheL1: true,
   },
 
-  // XPLA Testnet (Another Avalanche L1 example)
-  xpla: {
-    id: 5050502,
-    name: 'XPLA Testnet',
-    shortName: 'XPLA',
-    icon: '/icons/xpla.svg',
-    rpcUrl: 'https://subnets.avax.network/xpla/testnet/rpc',
-    blockExplorer: 'https://subnets.avax.network/xpla/testnet',
+  // Echo Testnet (Avalanche L1)
+  echo: {
+    id: 397,
+    name: 'Echo Testnet',
+    shortName: 'Echo',
+    icon: '/icons/echo.svg',
+    rpcUrl: 'https://subnets.avax.network/echo/testnet/rpc',
+    blockExplorer: 'https://subnets.avax.network/echo/testnet',
     nativeCurrency: {
-      name: 'XPLA',
-      symbol: 'XPLA',
+      name: 'ECHO',
+      symbol: 'ECHO',
       decimals: 18,
     },
     isTestnet: true,
@@ -52,21 +52,21 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
     isAvalancheL1: true,
   },
 
-  // Arbitrum Sepolia
-  arbitrumSepolia: {
-    id: 421614,
-    name: 'Arbitrum Sepolia',
-    shortName: 'Arb Sep',
-    icon: '/icons/arbitrum.svg',
-    rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
-    blockExplorer: 'https://sepolia.arbiscan.io',
+  // Ethereum Sepolia
+  sepolia: {
+    id: 11155111,
+    name: 'Ethereum Sepolia',
+    shortName: 'Sepolia',
+    icon: '/icons/ethereum.svg',
+    rpcUrl: 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY',
+    blockExplorer: 'https://sepolia.etherscan.io',
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
       decimals: 18,
     },
     isTestnet: true,
-    category: 'arbitrum',
+    category: 'ethereum',
     isAvalancheL1: false,
   },
 
@@ -86,41 +86,6 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
     isTestnet: true,
     category: 'polygon',
     isAvalancheL1: false,
-  },
-
-  // Base Sepolia
-  baseSepolia: {
-    id: 84532,
-    name: 'Base Sepolia',
-    shortName: 'Base',
-    icon: '/icons/base.svg',
-    rpcUrl: 'https://sepolia.base.org',
-    blockExplorer: 'https://sepolia.basescan.org',
-    nativeCurrency: {
-      name: 'ETH',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    isTestnet: true,
-    category: 'ethereum',
-    isAvalancheL1: false,
-  },
-
-  dexalot: {
-    id: 432201,
-    name: 'Dexalot Testnet',
-    shortName: 'Dexalot',
-    icon: '/icons/dexalot.svg',
-    rpcUrl: 'https://subnets.avax.network/dexalot/testnet/rpc',
-    blockExplorer: 'https://subnets.avax.network/dexalot/testnet',
-    nativeCurrency: {
-      name: 'ALOT',
-      symbol: 'ALOT',
-      decimals: 18,
-    },
-    isTestnet: true,
-    category: 'avalanche-l1',
-    isAvalancheL1: true,
   },
 };
 
@@ -145,9 +110,8 @@ export const CHAIN_CATEGORIES = {
 
 // Faucet links for testnets
 export const FAUCETS: Record<string, string> = {
-  dispatch: 'https://faucet.avax.network/',
-  xpla: 'https://faucet.avax.network/',
-  arbitrumSepolia: 'https://faucet.arbitrum.io/',
+  dispatch: 'https://test.core.app/tools/testnet-faucet/?subnet=dispatch&token=dispatch',
+  echo: 'https://test.core.app/tools/testnet-faucet/?subnet=echo&token=echo',
+  sepolia: 'https://faucets.chain.link/sepolia',
   polygonAmoy: 'https://faucet.polygon.technology/',
-  baseSepolia: 'https://faucet.base.org/',
 }; 
