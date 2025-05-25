@@ -1,0 +1,240 @@
+import { useState, useEffect } from 'react';
+import { useAccount, useNetwork, useSwitchNetwork, useBalance } from 'wagmi';
+import { ethers } from 'ethers';
+import toast from 'react-hot-toast';
+import ChainSelector from './ChainSelector';
+import TokenSelector from './TokenSelector';
+import RouteDisplay from './RouteDisplay';
+import { SUPPORTED_CHAINS, SUPPORTED_TOKENS, Token } from '../utils/chains';
+import { findBestRoute, executeSwap } from '../utils/contracts';
+import { formatAmount } from '../utils/format';
+
+export default function SwapInterface() {
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
+
+  // Swap state
+  const [fromChain, setFromChain] = useState(SUPPORTED_CHAINS[0]);
+  const [toChain, setToChain] = useState(SUPPORTED_CHAINS[1]);
+  const [fromToken, setFromToken] = useState<Token>(SUPPORTED_TOKENS[fromChain.id][0]);
+  const [toToken, setToToken] = useState<Token>(SUPPORTED_TOKENS[toChain.id][0]);
+  const [amount, setAmount] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [route, setRoute] = useState<any>(null);
+  const [txHash, setTxHash] = useState('');
+
+  // Get token balance
+  const { data: balance } = useBalance({
+    address,
+    token: fromToken.address as `0x${string}`,
+    chainId: fromChain.id,
+    watch: true,
+  });
+
+  // Update tokens when chains change
+  useEffect(() => {
+    setFromToken(SUPPORTED_TOKENS[fromChain.id][0]);
+  }, [fromChain]);
+
+  useEffect(() => {
+    setToToken(SUPPORTED_TOKENS[toChain.id][0]);
+  }, [toChain]);
+
+  // Find route when amount changes
+  useEffect(() => {
+    if (amount && parseFloat(amount) > 0) {
+      findRoute();
+    } else {
+      setRoute(null);
+    }
+  }, [amount, fromChain, toChain, fromToken, toToken]);
+
+  const findRoute = async () => {
+    try {
+      const amountWei = ethers.utils.parseUnits(amount, fromToken.decimals);
+      const bestRoute = await findBestRoute(
+        fromChain.id,
+        fromToken.address,
+        toToken.address,
+        amountWei.toString()
+      );
+      setRoute(bestRoute);
+    } catch (error) {
+      console.error('Error finding route:', error);
+    }
+  };
+
+  const handleSwap = async () => {
+    if (!isConnected) {
+      toast.error('Please connect your wallet');
+      return;
+    }
+
+    if (!route) {
+      toast.error('No route found');
+      return;
+    }
+
+    if (chain?.id !== fromChain.id) {
+      switchNetwork?.(fromChain.id);
+      toast.error(`Please switch to ${fromChain.name}`);
+      return;
+    }
+
+    setIsLoading(true);
+    const toastId = toast.loading('Preparing swap...');
+
+    try {
+      const amountWei = ethers.utils.parseUnits(amount, fromToken.decimals);
+      const txHash = await executeSwap(
+        route,
+        amountWei.toString(),
+        address!
+      );
+      
+      setTxHash(txHash);
+      toast.success('Swap initiated!', { id: toastId });
+      
+      // Reset form
+      setAmount('');
+      setRoute(null);
+    } catch (error: any) {
+      console.error('Swap error:', error);
+      toast.error(error.message || 'Swap failed', { id: toastId });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const switchChains = () => {
+    setFromChain(toChain);
+    setToChain(fromChain);
+    setFromToken(toToken);
+    setToToken(fromToken);
+    setAmount('');
+    setRoute(null);
+  };
+
+  return (
+    <div className="w-full max-w-lg mx-auto">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl">
+        {/* From Section */}
+        <div className="mb-4">
+          <label className="text-white text-sm mb-2 block">From</label>
+          <div className="bg-white/5 rounded-xl p-4">
+            <div className="flex justify-between mb-3">
+              <ChainSelector
+                chain={fromChain}
+                onChange={setFromChain}
+                label="From"
+              />
+              <TokenSelector
+                token={fromToken}
+                onChange={setFromToken}
+                chainId={fromChain.id}
+              />
+            </div>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0.0"
+              className="w-full bg-transparent text-white text-2xl outline-none"
+            />
+            {balance && (
+              <div className="flex justify-between mt-2">
+                <span className="text-purple-300 text-sm">
+                  Balance: {formatAmount(balance.formatted)} {fromToken.symbol}
+                </span>
+                <button
+                  onClick={() => setAmount(balance.formatted)}
+                  className="text-purple-400 text-sm hover:text-purple-300"
+                >
+                  MAX
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Switch Button */}
+        <div className="flex justify-center my-2">
+          <button
+            onClick={switchChains}
+            className="bg-white/10 hover:bg-white/20 rounded-full p-2 transition-colors"
+          >
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+          </button>
+        </div>
+
+        {/* To Section */}
+        <div className="mb-6">
+          <label className="text-white text-sm mb-2 block">To</label>
+          <div className="bg-white/5 rounded-xl p-4">
+            <div className="flex justify-between mb-3">
+              <ChainSelector
+                chain={toChain}
+                onChange={setToChain}
+                label="To"
+              />
+              <TokenSelector
+                token={toToken}
+                onChange={setToToken}
+                chainId={toChain.id}
+              />
+            </div>
+            {route && (
+              <div className="text-white text-2xl">
+                ~{formatAmount(ethers.utils.formatUnits(route.expectedOutput, toToken.decimals))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Route Display */}
+        {route && <RouteDisplay route={route} />}
+
+        {/* Swap Button */}
+        <button
+          onClick={handleSwap}
+          disabled={!isConnected || !amount || !route || isLoading}
+          className={`w-full py-4 rounded-xl font-semibold text-white transition-all ${
+            !isConnected || !amount || !route || isLoading
+              ? 'bg-gray-600 cursor-not-allowed'
+              : 'bg-purple-600 hover:bg-purple-700 cursor-pointer'
+          }`}
+        >
+          {!isConnected
+            ? 'Connect Wallet'
+            : !amount
+            ? 'Enter Amount'
+            : !route
+            ? 'No Route Available'
+            : isLoading
+            ? 'Swapping...'
+            : 'Swap'}
+        </button>
+
+        {/* Transaction Status */}
+        {txHash && (
+          <div className="mt-4 p-3 bg-green-500/20 rounded-lg">
+            <p className="text-green-300 text-sm">
+              Transaction submitted!{' '}
+              <a
+                href={`${fromChain.blockExplorers?.default.url}/tx/${txHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                View on Explorer
+              </a>
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

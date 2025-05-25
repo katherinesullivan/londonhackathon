@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST="{\"..\\\\src\\\\utils\\\\contracts.ts -> ethers\":{\"id\":\"..\\\\src\\\\utils\\\\contracts.ts -> ethers\",\"files\":[\"static/chunks/node_modules_ethers_lib_esm_index_js.js\"]}}"
