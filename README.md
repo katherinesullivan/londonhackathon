@@ -2,24 +2,36 @@
 
 **RAWR! Stomp through the blockchain jungle like a prehistoric beast!** 🦕
 
-A fun, T-rex themed cross-chain bridge connecting Avalanche L1s with external blockchains using Teleporter and Chainlink CCIP.
+A fun, T-rex themed cross-chain bridge enabling swaps between Avalanche L1s and external blockchains using Avlanche's ICM, Avalanche's ICTT and Chainlink's CCIP.
 
-## 🌿 Overview
+## 🌿 General Overview
 
-T-rex enables seamless token swapping between prehistoric blockchain networks:
-- **Avalanche L1s** (Dispatch, Echo) using Teleporter
+T-rex enables seamless token swapping between different blockchain networks:
+- **Avalanche L1s** (Dispatch, Echo) using ICM/ICTT
+- **Avalanche C-Chain** (Fuji) using both ICM/ICTT and CCIP
 - **External Chains** (Ethereum Sepolia, Polygon Amoy) via CCIP
-- **Hybrid Routes** with realistic mock pricing data
 
-## 🦴 Key Features
+## 🦴 Technical Overview
+
+For a technical overview on how the multi-hop cross-chain swapping is being enabled read [the src README.md](src/README.md)
+
+## 🎨 Repository's organization
+
+- `src` folder contains the smart contracts that enable to perform the cross-chain swapping
+- `frontend` folder contains all the frontend files
+- `chainlink_deployedcontracts` folder contains chainlink contracts that perfom token and data transfers on the same transactions which are the basis for understanding how to implement ccip logic for the multi-hop cross-chain swapping
+- `lib` folder contains contract's dependencies that came in as handy when we had problems using forge
+- `t-rex_graveyard` folder is a fun place to explore previous ideas we developed and files we just felt attached too to
+
+<!-- ## 🦴 Key Features
 
 ### 🎨 T-rex Jungle Theme
 - **Prehistoric UI** with jungle green color scheme
 - **T-rex Branding** throughout the interface
 - **Cave-themed Wallet** connection with 🏔️ icons
-- **Subtle T-rex Background** elements for immersion
+- **Subtle T-rex Background** elements for immersion -->
 
-### 🌐 Supported Networks (4 Prehistoric Testnets)
+<!-- ### 🌐 Supported Networks (4 Prehistoric Testnets)
 - **Dispatch Testnet** (779672) - Avalanche L1 🦖
 - **Echo Testnet** (397) - Avalanche L1 🦕  
 - **Ethereum Sepolia** (11155111) - External chain
@@ -29,7 +41,7 @@ T-rex enables seamless token swapping between prehistoric blockchain networks:
 - **Real Market Prices**: ETH ($2,500), MATIC ($0.35), AVAX ($22.80)
 - **Dynamic Slippage**: 0.1% - 3% based on trade size and liquidity
 - **Realistic Fees**: Gas ($0.08 - $8.50), Bridge ($0.80 - $3.50), Protocol (0.05%)
-- **Time Estimates**: 30s - 20min depending on route complexity
+- **Time Estimates**: 30s - 20min depending on route complexity -->
 
 ## 🚀 Quick Start
 
@@ -83,7 +95,7 @@ Get test tokens from faucets:
 - **Hybrid Route**: L1 → External (multi-hop)
 - **CCIP + Teleporter**: External → L1 (complex)
 
-## 🌿 Technical Architecture
+## 🌿 Technical Architecture of the Frontend
 
 ### Frontend (Next.js + TypeScript)
 ```
@@ -200,7 +212,7 @@ NEXT_PUBLIC_ENVIRONMENT=development
 2. Update `REAL_TOKEN_PRICES` object
 3. Modify fee calculation logic
 
-## 🚨 Current Status
+<!-- ## 🚨 Current Status
 
 ### ✅ Frontend Complete
 - **T-rex Theme**: Fully implemented
@@ -216,7 +228,7 @@ NEXT_PUBLIC_ENVIRONMENT=development
 ### 🎯 Demo Ready
 - **URL**: http://localhost:3001
 - **Default**: Dispatch → Amoy swap ready
-- **Experience**: Full T-rex themed journey
+- **Experience**: Full T-rex themed journey -->
 
 ## 🦖 T-rex Easter Eggs
 
@@ -244,5 +256,5 @@ NEXT_PUBLIC_ENVIRONMENT=development
 
 ---
 
-**🦖 Built for London Hackathon 2024** 
+**🦖 Built for London Hackathon 2025** 
 *Stomp through the blockchain jungle with prehistoric power!* 🌿🦕
