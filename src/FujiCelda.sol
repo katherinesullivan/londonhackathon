@@ -20,8 +20,8 @@ struct CeldaPayload {
 contract FujiCelda {
     using SafeERC20 for IERC20;
 
-    address public immutable icttTokenTransferrer;
-    address public immutable ccipRouter;
+    address public immutable icttTokenTransferrer; // this should then be mutable and updatable with hop info
+    address public immutable ccipRouter; // this should then be mutable and updatable with hop info
 
     event Forwarded(address indexed toChain, address router, address token, uint256 amount, uint8 hopIndex);
     event Swap(address indexed tokenIn, uint256 amountIn, address tokenOut, uint256 amountOut);

@@ -16,7 +16,7 @@ struct CeldaPayload {
 contract ExternalCelda {
     using SafeERC20 for IERC20;
 
-    address public immutable ccipRouter;
+    address public immutable ccipRouter; // this should then be mutable and updatable with hop info
     address public immutable allowedRouter;
 
     event Forwarded(address indexed toChain, address router, address token, uint256 amount, uint8 hopIndex);
